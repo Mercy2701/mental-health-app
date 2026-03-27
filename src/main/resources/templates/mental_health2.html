@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Kesehatan Mental</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f1f5f9;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* --- LOADING OVERLAY --- */
+        #loader-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(16, 185, 129, 0.1);
+            border-left-color: #10b981;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Validasi visual sederhana untuk input yang kosong saat difokuskan */
+        .custom-input:invalid:focus {
+            border-color: #ef4444;
+        }
+
+        .glass-card { background: #ffffff; border: 1px solid #e2e8f0; }
+        .custom-input {
+            width: 100%; border: 1.5px solid #e2e8f0; border-radius: 10px;
+            padding: 10px 12px; background: #f8fafc; outline: none;
+            transition: all 0.2s; font-size: 0.875rem;
+        }
+        .custom-input:focus {
+            border-color: #10b981; background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        label {
+            display: block; font-size: 0.7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            color: #64748b; margin-bottom: 6px;
+        }
+        .section-title {
+            font-size: 0.9rem; font-weight: 800; color: #1e293b;
+            margin-bottom: 1.5rem; padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f1f5f9; display: flex; align-items: center;
+        }
+        .section-icon { margin-right: 8px; color: #10b981; }
+    </style>
+</head>
+
+<body class="py-12 px-4 text-slate-800">
+
+    <div id="loader-overlay">
+        <div class="spinner mb-4"></div>
+        <p class="text-emerald-400 text-xs font-bold uppercase tracking-[0.3em] animate-pulse">
+            Menganalisis Data...
+        </p>
+    </div>
+
+    <div class="max-w-6xl mx-auto glass-card rounded-[2rem] shadow-xl overflow-hidden">
+        
+        <div class="bg-slate-900 p-10 text-center text-white border-b-4 border-emerald-500">
+            <h2 class="text-3xl font-extrabold tracking-tight">
+                MENTAL HEALTH <span class="text-emerald-400">CLASSIFIER</span>
+            </h2>
+            <p class="mt-2 text-slate-400 italic text-sm font-medium">
+                Implementasi Klasifikasi Gangguan Kesehatan Mental pada Pekerja Industri Teknologi
+            </p>
+        </div>
+
+        <form id="prediction-form" th:action="@{/predict}" method="post" class="p-8 lg:p-12">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                
+                <div class="space-y-6">
+                    <h3 class="section-title">
+                        <span class="section-icon">●</span> INFORMASI RESPONDEN
+                    </h3>
+                    
+                    <div>
+                        <label>Age</label>
+                        <input type="number" name="age" min="15" max="99" class="custom-input" placeholder="e.g. 25" required>
+                    </div>
+
+                    <div>
+                        <label>Gender</label>
+                        <select name="gender" class="custom-input" required>
+                            <option value="">Pilih Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Trans/Other">Trans/Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="section-title">
+                        <span class="section-icon">●</span> KONTEKS PEKERJAAN
+                    </h3>
+
+                    <div>
+                        <label>Age group</label>
+                        <select name="ageGroup" class="custom-input" required>
+                            <option value="">Pilih Age Group</option>
+                            <option>Under 20</option>
+                            <option>20-25</option>
+                            <option>26-30</option>
+                            <option>31-35</option>
+                            <option>36-40</option>
+                            <option>41-45</option>
+                            <option>46-50</option>
+                            <option>51-55</option>
+                            <option>56-60</option>
+                            <option>61-65</option>
+                            <option>Over 65</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Work position</label>
+                        <select name="workPosition" class="custom-input" required>
+                            <option value="">Pilih Posisi</option>
+                            <option>Back-end Developer</option>
+                            <option>Front-end Developer</option>
+                            <option>DevOps/SysAdmin</option>
+                            <option>Dev Evangelist/Advocate</option>
+                            <option>Supervisor/Team Lead</option>
+                            <option>Executive Leadership</option>
+                            <option>Support</option>
+                            <option>Designer</option>
+                            <option>HR</option>
+                            <option>Sales</option>
+                            <option>One-person shop</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Company Size</label>
+                        <select name="numEmployees" class="custom-input" required>
+                            <option value="">Pilih Ukuran Perusahaan</option>
+                            <option value="1-5">1-5</option>
+                            <option value="6-25">6-25</option>
+                            <option value="26-100">26-100</option>
+                            <option value="100-500">100-500</option>
+                            <option value="500-1000">500-1000</option>
+                            <option value="More than 1000">More than 1000</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label>Tech Company?</label>
+                            <select name="techCompany" class="custom-input" required>
+                                <option value="">Pilih...</option>
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Tech Role?</label>
+                            <select name="techRole" class="custom-input" required>
+                                <option value="">Pilih...</option>
+                                <option value="True">True</option>
+                                <option value="False">False</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="section-title">
+                        <span class="section-icon">●</span> KONDISI & RIWAYAT
+                    </h3>
+
+                    <div>
+                        <label>Family history of mental illness</label>
+                        <select name="familyHistory" class="custom-input" required>
+                            <option value="">Pilih...</option>
+                            <option>No</option>
+                            <option>Yes</option>
+                            <option>I don't know</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Self employed?</label>
+                        <select name="selfemployed" class="custom-input" required>
+                            <option value="">Pilih...</option>
+                            <option value="True">True</option>
+                            <option value="False">False</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Have you ever sought treatment?</label>
+                        <select name="soughtTreatment" class="custom-input" required>
+                            <option value="">Pilih...</option>
+                            <option value="True">True</option>
+                            <option value="False">False</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Do you work remotely?</label>
+                        <select name="remoteWork" class="custom-input" required>
+                            <option value="">Pilih...</option>
+                            <option>Sometimes</option>
+                            <option>Never</option>
+                            <option>Always</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Do you have previous employers?</label>
+                        <select name="previousEmployers" class="custom-input" required>
+                            <option value="">Pilih...</option>
+                            <option value="True">True</option>
+                            <option value="False">False</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Mental vs Physical Openness</label>
+                        <select name="openAboutMentalHealth" class="custom-input" required>
+                            <option value="">Pilih...</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-16 flex justify-center">
+                <button type="submit"
+                    class="px-24 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition-all active:scale-95">
+                    Mulai Klasifikasi
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('prediction-form');
+        const loader = document.getElementById('loader-overlay');
+
+        form.addEventListener('submit', function(event) {
+            // Cek validitas form sebelum memunculkan loader
+            if (form.checkValidity()) {
+                loader.style.display = 'flex';
+            } else {
+                // Browser akan otomatis memunculkan tooltip peringatan jika ada yang kosong
+                console.log("Form belum lengkap.");
+            }
+        });
+    </script>
+
+    <p class="text-center mt-8 text-slate-400 text-[10px] tracking-[0.2em] uppercase font-bold">
+        © 2026 Aplikasi Klasifikasi Gangguan Kesehatan Mental
+    </p>
+
+</body>
+</html>
