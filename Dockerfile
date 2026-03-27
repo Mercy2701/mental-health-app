@@ -8,12 +8,12 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     build-essential \
-    python3-dev
+    python3-dev \
+    maven
 
 RUN pip3 install --break-system-packages --no-cache-dir -r requirements.txt
 
-RUN chmod +x mvnw
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 EXPOSE 8080
 
