@@ -12,8 +12,15 @@ WORKDIR /app
 # Copy project
 COPY . .
 
+# Install Python + tools
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    build-essential \
+    python3-dev
+    
 # Install Python dependencies
-RUN pip3 install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Build Spring Boot
 RUN chmod +x mvnw
